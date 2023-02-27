@@ -37,34 +37,35 @@ void order_double(double m[clients] [products] , double distanceOrd [products] ,
 }
 
 
-void getTransBetter (double pesoTrans[clients][products] , string nameClient[clients] , string typeProd[products] , int ClientUp)
+void getTransBetter (double pesoTrans[clients][products] , string nameClient[clients] , string typeProd[products] , int &ClientUp)
 {
-    int cant=0 , better=0 ; 
+    int cant=0 , better=0 ,temp; 
     for(int i =0; i<clients; i++){
-		cout<<"Nombre de Cliente: " <<nameClient[i];
+		cout<<"Nombre de Cliente: " <<nameClient[i]<<endl;
 		for(int j = 0; j<products; j++ ){
 			if(pesoTrans[i][j]>13000 ){
 				cant++;
 				cout<<" Producto Transportado: "<<typeProd[j]<<endl;
 				if (cant>better){
 					better = cant;
-					ClientUp= i;
+					temp= i;
 				}
 			}
 		}
 		cant=0;
-		
+		 cout<<"-------CAMBIANDO CLIENTE-------"<<endl ; 
 	}
-
+    ClientUp =temp ; 
+   cout<<"-------FIN DEL LISTADO SOBRE PESO TRANSPORTADO >13000KG -------"<<endl ; 
 }
 
-void getDistanceBetter (double distanceRecorry[clients][products] ,double distanceOrd[products] , string typeProdOrd[products] , int ClientUp ,int send)
+void getDistanceBetter (double distanceRecorry[clients][products] ,double distanceOrd[products] , string typeProdOrd[products] , int ClientUp ,int &send)
 {
-    int better= 0 ; 
+    double better= 0 ; 
     for(int i =0; i<products; i++){
 		cout<<"El producto : "<<typeProdOrd[i];
 		cout<<" con una distancia de : "<<distanceOrd[i]<<endl;
-		//mintras muestro, busco el mayor kilometraje
+		
 		if( distanceRecorry[ClientUp][i]>better){
 			better=  distanceRecorry[ClientUp][i];
 			send= i;
@@ -76,7 +77,7 @@ int main ()
 {   //Creó las variables para trabajar 
 
     int num_client , num_product , clientUp =0 , send =0 ,cl=0 ,pr =0  ; //clientUp y send sirven para guardar al cliente q hizo más transportes de determinado kg
-    string  name_clients[clients ] {} , type_products [5] {} ,productsOrd[]{} ; 
+    string  name_clients[clients] {} , type_products [products] {} ,productsOrd[products]{} ; 
     string nameC ; 
     
     double peso , distance  ;
@@ -108,7 +109,17 @@ int main ()
 	}
 	archiNombres.close();
 
-    
+    //muestro los datos cargados 
+    for(int  i = 0 ; i< clients+products ; i++)
+    {
+        if(i<clients)
+        {
+            cout<<"mostrando cliente num: "<<i<<"-. "<<name_clients[i]<<endl ;  
+        }else 
+        {
+            cout<<"Mostrando producto num: "<<i-clients<<"-. "<<type_products[i-clients] <<endl; 
+        }
+    }
 
      /*Abrimos el archivo para editarlo */
     archi.open("entrada.txt") ;
@@ -130,12 +141,14 @@ int main ()
     
     archi.close () ;
    
-   
+       cout<<"-------INICIO DEL LISTADO SOBRE PESO TRANSPORTADO >13000KG -------"<<endl ; 
+
     getTransBetter(pesoTrans,name_clients,type_products,clientUp) ; 
     order_double(distanceRecorry,distanceRecorryOrd,productsOrd , type_products,clientUp);
+    cout<<"-------INICIO DEL LISTADO SOBRE DISTANCIA RECORRIDA EN FORMA ASCENDENTE -------"<<endl ; 
     getDistanceBetter(distanceRecorry,distanceRecorryOrd,type_products,clientUp,send);
 
-    cout<<"El producto : " <<type_products[send];
-	cout<<" tiene un total de: "<<entregas[send]<<" entregas";
+    cout<<"El producto con mayor distancia recorrida es : " <<type_products[send];
+	cout<<" que  tiene un total de: "<<entregas[send]<<" entregas";
     return 0;
  }
